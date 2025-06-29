@@ -1,32 +1,59 @@
-import ingredientsReducer, {
-  getIngredientsRequest,
-  getIngredientsSuccess,
-  getIngredientsFailed,
-} from '../ingredients';
+import { ingredientReducer } from '../IngredientsSlice';
+import { fetchIngredients } from '../IngredientsSlice';
+import { TIngredient } from '../../../utils/types';
 
-describe('ingredientsReducer', () => {
+describe('ingredientsSlice reducer', () => {
   const initialState = {
     data: [],
-    isLoading: false,
-    error: null,
+    loading: false,
+    error: null
   };
 
-  it('должен установить isLoading в true на getIngredientsRequest', () => {
-    const state = ingredientsReducer(initialState, getIngredientsRequest());
-    expect(state.isLoading).toBe(true);
+  test('должен установить loading в true при fetchIngredients.pending', () => {
+    const nextState = ingredientReducer(
+      initialState,
+      fetchIngredients.pending('', undefined)
+    );
+    expect(nextState.loading).toBe(true);
+    expect(nextState.error).toBeNull();
+    expect(nextState.data).toEqual([]);
   });
 
-  it('должен сохранить данные и выключить isLoading на getIngredientsSuccess', () => {
-    const mockData = [{ _id: '1', name: 'Мясо' }];
-    const state = ingredientsReducer(initialState, getIngredientsSuccess(mockData));
-    expect(state.data).toEqual(mockData);
-    expect(state.isLoading).toBe(false);
+  test('должен сохранить данные и установить loading в false при fetchIngredients.fulfilled', () => {
+    const mockIngredients: TIngredient[] = [
+      {
+        _id: '1',
+        name: 'Булка',
+        type: 'bun',
+        proteins: 0,
+        fat: 0,
+        carbohydrates: 0,
+        calories: 0,
+        price: 0,
+        image: '',
+        image_large: '',
+        image_mobile: ''
+      }
+    ];
+
+    const nextState = ingredientReducer(
+      initialState,
+      fetchIngredients.fulfilled(mockIngredients, '', undefined)
+    );
+    expect(nextState.loading).toBe(false);
+    expect(nextState.data).toEqual(mockIngredients);
+    expect(nextState.error).toBeNull();
   });
 
-  it('должен сохранить ошибку и выключить isLoading на getIngredientsFailed', () => {
-    const error = 'Ошибка загрузки';
-    const state = ingredientsReducer(initialState, getIngredientsFailed(error));
-    expect(state.error).toBe(error);
-    expect(state.isLoading).toBe(false);
+  test('должен сохранить ошибку и установить loading в false при fetchIngredients.rejected', () => {
+    const errorMessage = 'Ошибка загрузки';
+
+    const nextState = ingredientReducer(
+      initialState,
+      fetchIngredients.rejected(null, '', undefined, errorMessage)
+    );
+    expect(nextState.loading).toBe(false);
+    expect(nextState.error).toBe(errorMessage);
+    expect(nextState.data).toEqual([]);
   });
 });

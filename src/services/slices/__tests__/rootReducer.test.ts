@@ -1,13 +1,11 @@
-import { rootReducer } from '../../store';
+import store, { rootReducer } from '../../store';
 
-describe('rootReducer', () => {
-  it('возвращает начальное состояние при неизвестном экшене', () => {
-    const initialState = rootReducer(undefined, { type: 'UNKNOWN_ACTION' });
+describe('Правильная инициализация rootReducer', () => {
+  it('возвращает начальное состояние, если действие неизвестно', () => {
+    const unknownAction = { type: 'UNKNOWN_ACTION' };
+    const initialState = rootReducer(undefined, unknownAction);
+    const currentStoreState = store.getState();
 
-    expect(initialState).toHaveProperty('ingredients');
-    expect(initialState).toHaveProperty('burgerConstructor');
-    expect(initialState).toHaveProperty('order');
-    expect(initialState).toHaveProperty('user');
-    expect(initialState).toHaveProperty('feed');
+    expect(initialState).toEqual(currentStoreState);
   });
 });

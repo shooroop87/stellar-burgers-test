@@ -1,18 +1,36 @@
-const { createDefaultPreset } = require('ts-jest');
-const preset = createDefaultPreset();
-
-/** @type {import('jest').Config} */
 module.exports = {
-  ...preset,
+  preset: 'ts-jest',
   testEnvironment: 'jsdom',
   moduleNameMapper: {
-    '^@api(.*)$': '<rootDir>/src/services/api$1',
-    '^@utils-types(.*)$': '<rootDir>/src/utils/types$1',
-    '^@components(.*)$': '<rootDir>/src/components$1',
-    '^@pages(.*)$': '<rootDir>/src/pages$1',
-    '^@services(.*)$': '<rootDir>/src/services$1',
-    '^@utils(.*)$': '<rootDir>/src/utils$1',
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '^@pages/(.*)$': '<rootDir>/src/pages/$1',
+    '^@components/(.*)$': '<rootDir>/src/components/$1',
+    '^@ui/(.*)$': '<rootDir>/src/components/ui/$1',
+    '^@ui-pages/(.*)$': '<rootDir>/src/components/ui/pages/$1',
+    '^@utils-types/(.*)$': '<rootDir>/src/utils/types/$1',
+    '^@api$': '<rootDir>/src/utils/burger-api.ts',
+    '^@slices/(.*)$': '<rootDir>/src/services/slices/$1',
+    '^@selectors/(.*)$': '<rootDir>/src/services/selectors/$1',
+    '\\.(css|scss|module\\.css)$': 'identity-obj-proxy',
+    '\\.(jpg|jpeg|png|svg|woff|woff2)$': '<rootDir>/__mocks__/fileMock.js'
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  testMatch: ['**/__tests__/**/*.test.{ts,tsx}'],
+  collectCoverageFrom: [
+    'src/**/*.{ts,tsx}',
+    '!src/**/*.test.{ts,tsx}',
+    '!src/**/index.ts'
+  ],
+  transform: {
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.json',
+        isolatedModules: true
+      }
+    ]
+  },
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/__mocks__/'
+  ]
 };
